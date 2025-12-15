@@ -8,6 +8,7 @@ interface IWordboxProp {
 
 const Wordbox = ({ word, onFinish }: IWordboxProp) => {
   const [lettersLeft, setLettersLeft] = useState<string>(word);
+  const [mistake, setMistake] = useState<boolean>(false);
 
   useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
@@ -18,12 +19,17 @@ const Wordbox = ({ word, onFinish }: IWordboxProp) => {
       const firstLetter = lettersLeft[0];
 
       if (e.key === firstLetter) {
-        // poslední písmeno
+        // ✅ správné písmeno
+        setMistake(false);
+
         if (lettersLeft.length === 1) {
           onFinish();
         } else {
           setLettersLeft(lettersLeft.slice(1));
         }
+      } else {
+        // ❌ špatné písmeno
+        setMistake(true);
       }
     };
 
@@ -34,7 +40,11 @@ const Wordbox = ({ word, onFinish }: IWordboxProp) => {
     };
   }, [lettersLeft, onFinish]);
 
-  return <div className="wordbox">{lettersLeft}</div>;
+  return (
+    <div className={`wordbox ${mistake ? 'wordbox--mistake' : ''}`}>
+      {lettersLeft}
+    </div>
+  );
 };
 
 export default Wordbox;

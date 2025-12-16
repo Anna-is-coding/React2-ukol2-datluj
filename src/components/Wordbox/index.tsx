@@ -4,13 +4,19 @@ import './style.css';
 interface IWordboxProp {
   word: string;
   onFinish: () => void;
+  active: boolean;
 }
 
-const Wordbox = ({ word, onFinish }: IWordboxProp) => {
+const Wordbox = ({ word, onFinish, active }: IWordboxProp) => {
   const [lettersLeft, setLettersLeft] = useState<string>(word);
   const [mistake, setMistake] = useState<boolean>(false);
 
   useEffect(() => {
+    // pokud není aktivní, neposlouchá klávesnici
+    if (!active) {
+      return;
+    }
+
     const handleKeyUp = (e: KeyboardEvent) => {
       if (lettersLeft.length === 0) {
         return;
@@ -19,7 +25,6 @@ const Wordbox = ({ word, onFinish }: IWordboxProp) => {
       const firstLetter = lettersLeft[0];
 
       if (e.key === firstLetter) {
-        // ✅ správné písmeno
         setMistake(false);
 
         if (lettersLeft.length === 1) {
@@ -28,7 +33,6 @@ const Wordbox = ({ word, onFinish }: IWordboxProp) => {
           setLettersLeft(lettersLeft.slice(1));
         }
       } else {
-        // ❌ špatné písmeno
         setMistake(true);
       }
     };
@@ -38,7 +42,7 @@ const Wordbox = ({ word, onFinish }: IWordboxProp) => {
     return () => {
       document.removeEventListener('keyup', handleKeyUp);
     };
-  }, [lettersLeft, onFinish]);
+  }, [lettersLeft, onFinish, active]);
 
   return (
     <div className={`wordbox ${mistake ? 'wordbox--mistake' : ''}`}>

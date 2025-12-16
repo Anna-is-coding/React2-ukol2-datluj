@@ -17,13 +17,15 @@ const generateWord = (size: number) => {
 };
 
 const Stage = () => {
-  const [words, setWords] = useState<string[]>([
-    generateWord(6)!,
-    generateWord(6)!,
-    generateWord(6)!,
-  ]);
-
+  const [started, setStarted] = useState<boolean>(false);
+  const [words, setWords] = useState<string[]>([]);
   const [mistakes, setMistakes] = useState<number>(0);
+
+  const handleStart = () => {
+    setMistakes(0);
+    setWords([generateWord(6)!, generateWord(6)!, generateWord(6)!]);
+    setStarted(true);
+  };
 
   const handleFinish = () => {
     const newWord = generateWord(6);
@@ -33,8 +35,18 @@ const Stage = () => {
   };
 
   const handleMistake = () => {
-    setMistakes((prevMistakes) => prevMistakes + 1);
+    setMistakes((prev) => prev + 1);
   };
+
+  if (!started) {
+    return (
+      <div className="stage stage--start">
+        <h1>Datluj.cz</h1>
+        <p>Trénuj psaní všemi deseti</p>
+        <button onClick={handleStart}>Start</button>
+      </div>
+    );
+  }
 
   return (
     <div className="stage">
